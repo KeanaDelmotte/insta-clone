@@ -5,6 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { FollowController } from './follow.controller';
 import { FollowService } from './follow.service';
 import { UserRepository } from '../auth/user.repository';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -12,8 +13,10 @@ import { UserRepository } from '../auth/user.repository';
     PassportModule,
     AuthModule,
     TypeOrmModule.forFeature([UserRepository]),
+    NotificationsModule,
   ],
   controllers: [FollowController],
   providers: [FollowService],
+  exports: [FollowService],
 })
 export class FollowModule {}

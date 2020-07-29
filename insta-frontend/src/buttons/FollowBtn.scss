@@ -1,0 +1,37 @@
+@import '../variables.scss';
+
+.user {
+  &_follow--blue-text {
+    border: none;
+    background-color: transparent;
+    font-family: Roboto;
+    font-weight: 500;
+    color: #0095f6;
+  }
+  &_follow {
+    font-family: Roboto;
+    font-weight: 500;
+    background-color: $color-lightblue;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.5rem 1rem;
+    outline: none;
+  }
+  &_follow--blue-text,
+  &_follow {
+    cursor: pointer;
+  }
+}
+
+.user--following {
+  color: black;
+  background-color: white;
+  border: 1px solid lightgray;
+}
+
+.user_follow--blue-text {
+  border: none;
+  background-color: transparent;
+  outline: none;
+}

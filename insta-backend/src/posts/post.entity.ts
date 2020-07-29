@@ -7,17 +7,23 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from '../auth/user.entity';
 import { Photo } from './photo.entity';
 import { Exclude, Transform } from 'class-transformer';
 import { Comment } from './comment.entity';
 import { IsNotEmpty } from 'class-validator';
+import { Notification } from '../notifications/notification.entity';
+import { ProfilePhoto } from '../auth/profilePhoto.entity';
 
 @Entity()
 export class Post extends BaseEntity {
+  @CreateDateColumn()
+  timeCreated: Date;
+
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   @IsNotEmpty()
@@ -35,9 +41,14 @@ export class Post extends BaseEntity {
   @ManyToOne(
     type => User,
     user => user.posts,
-    { eager: false },
   )
-  @Exclude()
+  @Transform((user: User) => {
+    return {
+      id: user.id,
+      username: user.username,
+      profilePhoto: user.profilePhoto,
+    };
+  })
   user: User;
 
   @ManyToMany(
@@ -63,6 +74,7 @@ export class Post extends BaseEntity {
   @ManyToMany(
     type => User,
     user => user.taggedIn,
+    { nullable: true },
   )
   @JoinTable()
   @Transform((tags: User[]) => {
@@ -72,5 +84,11 @@ export class Post extends BaseEntity {
     }));
     return transformedTags;
   })
-  tags: User[];
+  tags?: User[];
+
+  @OneToMany(
+    type => Notification,
+    notification => notification.post,
+  )
+  notifications: Notification[];
 }

@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthCredentialsDto = void 0;
 const class_validator_1 = require("class-validator");
 class AuthCredentialsDto {
 }
@@ -23,7 +24,7 @@ __decorate([
     class_validator_1.MinLength(8),
     class_validator_1.MaxLength(100),
     class_validator_1.Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-        message: 'password too weak. must include at least one capital letter, one lower case letter and one special charachter or number',
+        message: 'password too weak. must include at least one capital letter, one lower case letter and one special charachter or number and be equal to or longer than 8 characters to 100 characters',
     }),
     __metadata("design:type", String)
 ], AuthCredentialsDto.prototype, "password", void 0);

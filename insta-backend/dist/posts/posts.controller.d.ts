@@ -15,6 +15,7 @@ export declare class PostsController {
     deletePost(postId: number, reqUser: User): Promise<void>;
     seeUploadedFiles(image: any, res: any): any;
     getAllPosts(filterDto: GetPostDto): Promise<import("./post.entity").Post[]>;
+    getAllRelevantPosts(user: User): Promise<any[]>;
     getPostById(id: number): Promise<import("./post.entity").Post>;
     getAllUserPosts(userId: number): Promise<import("./post.entity").Post[]>;
     likePost(postId: number, user: User): Promise<import("./post.entity").Post>;
@@ -28,8 +29,9 @@ export declare class PostsController {
     getCommentById(commentId: string): Promise<import("./comment.entity").Comment>;
     likeComment(commentId: number, reqUser: User): Promise<User[]>;
     unlikeComment(commentId: number, reqUser: User): Promise<User[]>;
-    replyToComment(commentId: number, reqUser: User, createCommentDto: CreateCommentDto): Promise<import("./reply.entity").Reply[]>;
+    replyToComment(commentId: number, reqUser: User, createCommentDto: CreateCommentDto): Promise<import("./reply.entity").Reply>;
     getAllCommentReplies(commentId: number): Promise<import("./reply.entity").Reply[]>;
+    getReplyById(replyId: number): Promise<import("./reply.entity").Reply>;
     likeReply(replyId: number, reqUser: User): Promise<User[]>;
     unlikeReply(replyId: number, reqUser: User): Promise<void>;
     deleteReply(replyId: number, reqUser: User): Promise<void>;

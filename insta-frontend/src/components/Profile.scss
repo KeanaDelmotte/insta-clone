@@ -1,0 +1,289 @@
+@import '../variables.scss';
+.page_profile {
+  display: grid;
+  grid-template-columns: [left-side-start] 1fr [left-side-end content-start] 96rem [content-end right-side-start] 1fr [right-side-end];
+}
+.profile {
+  grid-column: content-start/content-end;
+  display: grid;
+  padding: 0 3rem;
+  box-sizing: border-box;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  border-bottom: 1px solid lightgray;
+  width: 100%;
+  height: 25vh;
+  // margin: 0 auto;
+  font-family: Roboto;
+  font-size: 1.6rem;
+  &_photo {
+    width: 15rem;
+    height: 15rem;
+
+    border-radius: 100rem;
+    object-fit: cover;
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 1;
+  }
+  &_navigation {
+    grid-column: content-start/content-end;
+
+    width: 100%;
+    height: 5rem;
+    grid-row: 2 / span 1;
+    display: flex;
+    // align-items: space-betwen;
+    justify-content: center;
+  }
+}
+
+.navigation {
+  &_posts,
+  &_igtv,
+  &_saved,
+  &_tagged {
+    outline: none;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    font-family: Roboto;
+    font-weight: 500;
+    color: $color-gray;
+    cursor: pointer;
+    margin: 0 1rem;
+  }
+  &_posts > svg,
+  &_igtv > svg,
+  &_saved > svg,
+  &_tagged > svg {
+    margin-right: 0.5rem;
+    fill: $color-gray;
+  }
+}
+.profile_navigation {
+  &--selected {
+    color: black;
+    border-top: 1px solid black;
+  }
+  &--selected > svg {
+    fill: black;
+  }
+}
+.username {
+  font-size: 3rem;
+  font-weight: 300;
+}
+
+.user {
+  &_actions {
+    grid-row: 1 / span 1;
+    grid-column: 2 / span 1;
+    display: flex;
+    align-items: center;
+  }
+  &_info {
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
+    display: flex;
+    align-items: center;
+  }
+  &-profile_posts {
+    grid-column: content-start/content-end;
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.info {
+  &_posts,
+  &_followers,
+  &_following {
+    margin-right: 1rem;
+  }
+}
+
+.profile_name {
+  grid-row: 3 / span 1;
+  grid-column: 2 / span 1;
+  font-weight: 500;
+}
+
+.edit-profile,
+.settings {
+  background-color: transparent;
+}
+.settings {
+  border: none;
+}
+
+.edit-profile {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  // height: 23px;
+  font-size: inherit;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0.5rem;
+  margin: 0 1rem;
+}
+
+.no-posts {
+  grid-column: content-start/content-end;
+  display: flex;
+  width: 100%;
+  &_image {
+    height: 40rem;
+    width: 40rem;
+  }
+  &_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
+}
+
+.googleplay_img,
+.appstore_img {
+  height: 4rem;
+  margin: 0 0.5rem;
+  // width: 4rem;
+}
+
+.start-capturing {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+}
+
+.get-app {
+  &--text {
+    font-size: 1.6rem;
+    margin: 0 0 2.5rem 0;
+  }
+}
+
+.igtv,
+.saved,
+.tagged-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  grid-column: content-start/content-end;
+  margin: 7rem 0;
+  &_icon,
+  &_saved_icon,
+  &_tagged-in_icon {
+    height: 6rem;
+    width: 6rem;
+    border-radius: 50%;
+    border: 1.5px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &_icon > svg {
+    fill: black;
+  }
+  &_upload-a-video {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin: 2rem 0 0 0;
+  }
+  &_info {
+    font-size: 1.4rem;
+    margin: 1rem;
+  }
+  &_upload {
+    background-color: $color-lightblue;
+    border-radius: 0.3rem;
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    font-family: Roboto;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-top: 1rem;
+  }
+}
+
+.saved {
+  &_save {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin: 2rem 0 0 0;
+  }
+  &_icon > svg {
+    fill: black;
+  }
+  &_info {
+    font-size: 1.4rem;
+    margin: 1rem;
+    max-width: 35rem;
+  }
+}
+
+.tagged-in {
+  &_photos-of-you {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin: 2rem 0 0 0;
+  }
+  &_info {
+    font-size: 1.4rem;
+    margin: 1rem;
+    max-width: 35rem;
+  }
+}
+
+.saved-posts {
+  grid-column: content-start/content-end;
+  overflow: hidden;
+
+  &_disclaimer {
+    font-size: 1.2rem;
+    color: $color-gray;
+    padding-left: 1rem;
+    max-width: 20%;
+    // display: inline;
+  }
+  &_posts {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+.profile-posts {
+  grid-column: content-start/content-end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-row: 3 / span 1;
+  padding: 7rem 0;
+  &_icon {
+    height: 6rem;
+    width: 6rem;
+    border-radius: 50%;
+    border: 1.5px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &_icon > svg {
+    stroke-width: 1px;
+  }
+  &_info {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin: 2rem 0 0 0;
+  }
+}

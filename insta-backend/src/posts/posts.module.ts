@@ -9,6 +9,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { Comment } from './comment.entity';
 import { UserRepository } from '../auth/user.repository';
 import { Reply } from './reply.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -16,8 +17,10 @@ import { Reply } from './reply.entity';
     PassportModule,
     AuthModule,
     MulterModule.register({ dest: './files' }),
+    NotificationsModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
+  exports: [PostsService],
 })
 export class PostsModule {}

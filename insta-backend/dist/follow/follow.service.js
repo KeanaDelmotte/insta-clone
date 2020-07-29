@@ -12,12 +12,16 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FollowService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_repository_1 = require("../auth/user.repository");
+const notifications_service_1 = require("../notifications/notifications.service");
+const notification_entity_1 = require("../notifications/notification.entity");
 let FollowService = class FollowService {
-    constructor(userRepository) {
+    constructor(userRepository, notificationService) {
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
     async followUser(userId, followerId) {
         const user = await this.userRepository.findOne(userId, {
@@ -52,6 +56,7 @@ let FollowService = class FollowService {
                 throw new common_1.InternalServerErrorException('Could not save follower');
             }
         }
+        this.notificationService.createNotification(followerUser, user, notification_entity_1.NotificationType.FOLLOWED);
         return followerUser.following;
     }
     async unfollowUser(userId, unfollower) {
@@ -89,7 +94,8 @@ let FollowService = class FollowService {
 FollowService = __decorate([
     common_1.Injectable(),
     __param(0, typeorm_1.InjectRepository(user_repository_1.UserRepository)),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        notifications_service_1.NotificationsService])
 ], FollowService);
 exports.FollowService = FollowService;
 //# sourceMappingURL=follow.service.js.map

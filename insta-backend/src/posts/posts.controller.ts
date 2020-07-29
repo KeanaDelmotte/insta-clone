@@ -33,7 +33,7 @@ import { GetPostDto } from './dto/getposts.dto';
 @Controller('posts')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PostsController {
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService) { }
 
   @Post('/upload')
   @UseGuards(AuthGuard())
@@ -75,6 +75,11 @@ export class PostsController {
   @Get()
   getAllPosts(@Query(ValidationPipe) filterDto: GetPostDto) {
     return this.postsService.getAllPosts(filterDto);
+  }
+  @Get('/relevant')
+  @UseGuards(AuthGuard())
+  getAllRelevantPosts(@GetUser() user: User) {
+    return this.postsService.getAllRelevantPosts(user);
   }
 
   @Get(':id')
@@ -190,6 +195,11 @@ export class PostsController {
   @Get('comments/:commentId/replies')
   getAllCommentReplies(@Param('commentId', ParseIntPipe) commentId: number) {
     return this.postsService.getAllCommentReplies(commentId);
+  }
+
+  @Get('comments/replies/:replyId')
+  getReplyById(@Param('replyId', ParseIntPipe) replyId: number) {
+    return this.postsService.getReplyById(replyId)
   }
 
   @Post('comments/replies/:replyId/like')

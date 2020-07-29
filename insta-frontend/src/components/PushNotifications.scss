@@ -1,0 +1,38 @@
+@import '../variables.scss';
+.push-notifications {
+  padding: 2rem;
+
+  &_notification {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    &_line {
+      height: 1px;
+      width: 100%;
+      // width: 40rem;
+      background-color: $super-lightgray;
+      color: $color-gray;
+      border: none;
+      // margin: 0 auto;
+    }
+  }
+}
+
+.notification {
+  &_heading {
+    font-size: 2.4rem;
+  }
+  &_label {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  &_option {
+    width: 100%;
+  }
+  &_example {
+    font-size: 1.4rem;
+    color: $color-gray;
+    margin-top: 0;
+  }
+}

@@ -6,6 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PostsRepository = void 0;
 const typeorm_1 = require("typeorm");
 const post_entity_1 = require("./post.entity");
 const common_1 = require("@nestjs/common");
@@ -13,23 +14,39 @@ const comment_entity_1 = require("./comment.entity");
 let PostsRepository = class PostsRepository extends typeorm_1.Repository {
     async getAllPosts(filterDto) {
         const { search } = filterDto;
-        const query = this.createQueryBuilder('post');
         if (search) {
-            query.andWhere('(post.description LIKE :search)', {
-                search: `%${search}%`,
+            const posts = await this.find({
+                relations: [
+                    'user',
+                    'likes',
+                    'comments',
+                    'comments.replies',
+                    'comments.likes',
+                    'comments.replies.user',
+                ],
+                where: {
+                    description: typeorm_1.Like(`%${search}%`),
+                },
             });
-        }
-        try {
-            const posts = await query.getMany();
             return posts;
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException();
-        }
+        const posts = await this.find({
+            relations: [
+                'user',
+                'likes',
+                'comments',
+                'comments.replies',
+                'comments.likes',
+                'comments.replies.user',
+            ],
+        });
+        return posts;
     }
     async comment(postId, createCommentDto, user) {
         const comment = new comment_entity_1.Comment();
-        const post = await this.findOne(postId, { relations: ['comments'] });
+        const post = await this.findOne(postId, {
+            relations: ['comments', 'user'],
+        });
         if (post) {
             comment.contents = createCommentDto.contents;
             comment.user = user;

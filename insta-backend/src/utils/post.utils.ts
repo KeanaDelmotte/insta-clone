@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 export const imageFileFilter = (req, file, callback) => {
   if (
     !file.originalname.match(
-      /\.(jpg|jpeg|png|gif|mov|avi|wmv|flv|3gp|mp4|mpg)$/,
+      /\.(jpg|jpeg|png|gif|mov|avi|wmv|flv|3gp|mp4|jfif|mpg)$/,
     )
   ) {
     return callback(

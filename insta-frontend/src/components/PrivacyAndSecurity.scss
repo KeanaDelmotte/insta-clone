@@ -1,0 +1,46 @@
+@import '../variables.scss';
+.privacy-and-security {
+  padding: 3rem 4rem;
+  &_heading {
+    font-size: 2.4rem;
+    font-weight: 400;
+    margin-top: 0;
+  }
+  &_label {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+  }
+  &_line {
+    background-color: lightgray;
+    border: none;
+    height: 1px;
+    width: 100%;
+    margin: 2rem 0;
+  }
+}
+
+.info-text {
+  &--med {
+    font-size: 1.4rem;
+    color: gray;
+    margin: 0;
+  }
+}
+
+.btn--bluetext {
+  padding: 0;
+  cursor: pointer;
+  background-color: transparent;
+  font-family: Roboto;
+  border: none;
+  color: $color-lightblue;
+  font-weight: 500;
+  font-size: 1.4rem;
+  outline: none;
+
+  &--disabled {
+    color: transparentize($color: $color-lightblue, $amount: 0.6);
+    cursor: not-allowed;
+  }
+}

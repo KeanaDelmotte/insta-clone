@@ -10,7 +10,8 @@ const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use('/public', express_1.default.static(path_1.join(__dirname, '..', 'files')));
-    await app.listen(3000);
+    app.enableCors();
+    await app.listen(3001);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

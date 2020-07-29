@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PostsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const posts_repository_1 = require("./posts.repository");
@@ -22,16 +23,20 @@ const comment_entity_1 = require("./comment.entity");
 const user_repository_1 = require("../auth/user.repository");
 const reply_entity_1 = require("./reply.entity");
 const common_2 = require("@nestjs/common");
+const notifications_service_1 = require("../notifications/notifications.service");
+const notification_entity_1 = require("../notifications/notification.entity");
 let PostsService = class PostsService {
-    constructor(postsRepository, commentRepository, replyRepository, userRepository) {
+    constructor(postsRepository, commentRepository, replyRepository, userRepository, notificationService) {
         this.postsRepository = postsRepository;
         this.commentRepository = commentRepository;
         this.replyRepository = replyRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
     async createPost(createPostDto, user, photos) {
+        const reqUser = await this.userRepository.findOne(user.id);
         const { description, tags } = createPostDto;
-        const tagged = JSON.parse(tags);
+        const tagged = tags ? JSON.parse(tags) : [];
         if (photos.length < 1 || !description) {
             throw new common_2.BadRequestException('You need to select a photo and include a description to upload');
         }
@@ -49,7 +54,7 @@ let PostsService = class PostsService {
         post.tags = [...taggedUsers];
         post.description = description;
         post.user = user;
-        user.taggedIn = [...user.taggedIn, post];
+        reqUser.taggedIn = [...reqUser.taggedIn, post];
         const newPhotos = photos.map(photo => {
             const newPhoto = new photo_entity_1.Photo();
             newPhoto.filename = photo.filename;
@@ -70,6 +75,11 @@ let PostsService = class PostsService {
         }
         catch (error) {
             throw new common_1.InternalServerErrorException('could not save photos');
+        }
+        if (tagged.length >= 1) {
+            await Promise.all(taggedUsers.map(u => {
+                this.notificationService.createNotification(user, u, notification_entity_1.NotificationType.TAGGED, post);
+            }));
         }
         return post;
     }
@@ -98,14 +108,60 @@ let PostsService = class PostsService {
     async getAllPosts(filterDto) {
         return this.postsRepository.getAllPosts(filterDto);
     }
+    async getAllRelevantPosts(user) {
+        const posts = await this.postsRepository.find({
+            relations: [
+                'user',
+                'user.followers',
+                'user.profilePhoto',
+                'likes',
+                'comments',
+                'comments.user',
+                'comments.user.profilePhoto',
+                'comments.replies',
+                'comments.replies.user',
+            ],
+        });
+        const relevantPosts = [];
+        posts.forEach(post => {
+            if (post.user.followers.find(u => u.id === user.id)) {
+                relevantPosts.push(post);
+            }
+            else if (post.likes.length > 100) {
+                relevantPosts.push(post);
+            }
+            else if (post.user.followers.length > 100) {
+                relevantPosts.push(post);
+            }
+        });
+        return relevantPosts;
+    }
     async getAllUserPosts(userId) {
-        const user = await this.userRepository.findOne(userId);
+        const user = await this.userRepository.findOne(userId, {
+            relations: [
+                'posts',
+                'posts.comments',
+                'posts.likes',
+                'posts.comments.replies',
+                'posts.comments.replies.user',
+                'posts.user',
+            ],
+        });
         if (!user) {
             throw new common_1.NotFoundException(`User with id ${userId} does not exist`);
         }
         return user.posts;
     }
-    async getPostById(id, relations = ['comments', 'likes', 'photos', 'user', 'saves', 'tags']) {
+    async getPostById(id, relations = [
+        'comments',
+        'comments.likes',
+        'likes',
+        'photos',
+        'user',
+        'saves',
+        'tags',
+        'user.posts',
+    ]) {
         const post = await this.postsRepository.findOne(id, {
             relations: relations,
         });
@@ -115,7 +171,7 @@ let PostsService = class PostsService {
         return post;
     }
     async likePost(postId, user) {
-        const post = await this.getPostById(postId, ['likes']);
+        const post = await this.getPostById(postId, ['likes', 'user']);
         const userLikedpost = post.likes.find(u => u.id === user.id);
         if (!userLikedpost) {
             post.likes = [...post.likes, user];
@@ -129,6 +185,7 @@ let PostsService = class PostsService {
         catch (error) {
             throw new common_1.InternalServerErrorException('Could not like post');
         }
+        await this.notificationService.createNotification(user, post.user, notification_entity_1.NotificationType.LIKED_POST, post);
         return post;
     }
     async unlikePost(postId, user) {
@@ -188,7 +245,13 @@ let PostsService = class PostsService {
         }
     }
     async comment(postId, createCommentDto, user) {
-        return this.postsRepository.comment(postId, createCommentDto, user);
+        const reqUser = await this.userRepository.findOne(user.id, {
+            relations: ['profilePhoto'],
+        });
+        const comment = await this.postsRepository.comment(postId, createCommentDto, reqUser);
+        console.log(`notification thing`, comment.post.user);
+        await this.notificationService.createNotification(user, comment.post.user, notification_entity_1.NotificationType.COMMENTED, comment.post, comment.contents);
+        return comment;
     }
     async deleteComment(commentId, user) {
         const removingcomment = await this.commentRepository.findOne(commentId, {
@@ -201,12 +264,21 @@ let PostsService = class PostsService {
         await removingcomment.remove();
     }
     async getAllComments(postId) {
-        const post = await this.getPostById(postId, ['comments']);
+        const post = await this.getPostById(postId, [
+            'comments',
+            'comments.replies',
+        ]);
         return post.comments;
     }
     async getCommentById(commentId) {
         const comment = await this.commentRepository.findOne(commentId, {
-            relations: ['replies', 'likes', 'user'],
+            relations: [
+                'replies',
+                'likes',
+                'user',
+                'user.profilePhoto',
+                'replies.user',
+            ],
         });
         if (!comment) {
             throw new common_1.NotFoundException(`Comment with id ${commentId} does not exist`);
@@ -218,7 +290,7 @@ let PostsService = class PostsService {
             relations: ['likedComments'],
         });
         const comment = await this.commentRepository.findOne(commentId, {
-            relations: ['likes'],
+            relations: ['likes', 'post', 'post.user'],
         });
         if (!comment) {
             throw new common_1.NotFoundException(`Comment with id ${commentId} does not exist`);
@@ -243,6 +315,7 @@ let PostsService = class PostsService {
         catch (error) {
             throw new common_1.InternalServerErrorException('Could not save like');
         }
+        this.notificationService.createNotification(reqUser, comment.user, notification_entity_1.NotificationType.LIKED_COMMENT, comment.post);
         return comment.likes;
     }
     async unlikeComment(commentId, reqUser) {
@@ -274,7 +347,7 @@ let PostsService = class PostsService {
     async replyToComment(commentId, reqUser, createCommentDto) {
         const { contents } = createCommentDto;
         const comment = await this.commentRepository.findOne(commentId, {
-            relations: ['replies'],
+            relations: ['replies', 'post', 'post.user'],
         });
         if (!comment) {
             throw new common_1.NotFoundException(`Comment with id ${commentId} does not exist`);
@@ -296,7 +369,8 @@ let PostsService = class PostsService {
         catch (error) {
             throw new common_1.InternalServerErrorException('Could not reply to comment');
         }
-        return comment.replies;
+        this.notificationService.createNotification(reqUser, reply.inReplyTo.user, notification_entity_1.NotificationType.REPLIED_TO_COMMENT, comment.post, reply.contents);
+        return reply;
     }
     async getAllCommentReplies(commentId) {
         const comment = await this.getCommentById(commentId);
@@ -304,6 +378,10 @@ let PostsService = class PostsService {
             throw new common_1.NotFoundException(`Comment with id ${commentId} does not exist`);
         }
         return comment.replies;
+    }
+    async getReplyById(replyId) {
+        const reply = await this.replyRepository.findOne(replyId, { relations: ['likes', 'user',] });
+        return reply;
     }
     async deleteReply(replyId, reqUser) {
         const reply = await this.replyRepository.findOne(replyId, {
@@ -319,7 +397,7 @@ let PostsService = class PostsService {
     }
     async likeReply(replyId, reqUser) {
         const reply = await this.replyRepository.findOne(replyId, {
-            relations: ['likes'],
+            relations: ['likes', 'inReplyTo'],
         });
         if (!reply) {
             throw new common_1.NotFoundException('The reply you are trying to like does not exist');
@@ -342,6 +420,7 @@ let PostsService = class PostsService {
         catch (error) {
             throw new common_1.InternalServerErrorException('Could not like reply');
         }
+        this.notificationService.createNotification(reqUser, reply.user, notification_entity_1.NotificationType.LIKED_REPLY, reply.inReplyTo.post, reply.contents);
         return reply.likes;
     }
     async unlikeReply(replyId, reqUser) {
@@ -372,7 +451,8 @@ PostsService = __decorate([
     __metadata("design:paramtypes", [posts_repository_1.PostsRepository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        user_repository_1.UserRepository])
+        user_repository_1.UserRepository,
+        notifications_service_1.NotificationsService])
 ], PostsService);
 exports.PostsService = PostsService;
 //# sourceMappingURL=posts.service.js.map

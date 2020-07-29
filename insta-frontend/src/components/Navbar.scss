@@ -1,0 +1,67 @@
+.nav {
+  margin: 0 auto;
+  height: 5rem;
+  display: flex;
+  // align-items: unsafe flex-end;
+  align-items: center;
+  // justify-content: center;
+  justify-content: center;
+  width: 50%;
+
+  &_logo {
+    max-height: 80%;
+    &--wrapper {
+      height: 5rem;
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      outline: 0;
+    }
+  }
+
+  &_button {
+    height: 2.8rem;
+    width: 2.8rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    margin: 1rem;
+    padding: 0;
+    // overflow: hidden;
+  }
+  &_wrapper {
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    position: sticky;
+    z-index: 2;
+  }
+  &_item {
+    // height: 80%;
+    outline: 0;
+  }
+}
+
+.profile_button {
+  height: 80%;
+  width: 80%;
+  border-radius: 50%;
+  background-position: center;
+  object-fit: cover;
+  // height: 2.2rem;
+}
+
+.nav_selected--profile {
+  border-radius: 100px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.2rem;
+  // box-sizing: content-box;
+  // box-sizing: border-box;
+}

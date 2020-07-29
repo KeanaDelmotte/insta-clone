@@ -1,0 +1,101 @@
+@import '../variables.scss';
+.edit-account {
+  width: 100%;
+
+  &_form {
+    display: grid;
+    grid-template-columns: [labels-start]20rem[labels-end input-start] 1fr [input-end];
+    gap: 2rem 0;
+    // width: 50%;
+    // margin: 0 auto;
+
+    &_label {
+      font-size: 1.6rem;
+      font-weight: 500;
+      grid-column: labels-start/labels-end;
+      justify-self: end;
+      margin-right: 3rem;
+      text-align: end;
+    }
+    &_input {
+      width: 35rem;
+      height: 2.5rem;
+      border: 1px solid lightgray;
+      outline: none;
+      font-size: 1.5rem;
+      &--bio {
+        width: 35rem;
+        outline: none;
+
+        border: 1px solid lightgray;
+      }
+    }
+  }
+  &_user {
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: [labels-start]20rem[labels-end input-start] 1fr [input-end];
+  }
+  &_personal {
+    display: flex;
+    flex-direction: column;
+    grid-column: input-start/input-end;
+    color: $color-gray;
+    margin-top: 0;
+    font-size: 1.2rem;
+
+    &--heading {
+      grid-column: input-start/input-end;
+      color: $color-gray;
+      font-weight: 500;
+      font-size: 1.4rem;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.edit-account {
+  &_user {
+    &_image {
+      height: 4rem;
+      width: 4rem;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 2rem;
+      grid-column: labels-start/labels-end;
+      justify-self: end;
+      align-self: center;
+    }
+    &_username {
+      display: flex;
+      flex-direction: column;
+      font-size: 1.8rem;
+      align-items: flex-start;
+    }
+    &_change-profileimg {
+      grid-column: input-start/input-end;
+    }
+  }
+}
+
+.form {
+  &_name,
+  &_username,
+  &_website,
+  &_bio,
+  &_email,
+  &_phone,
+  &_gender {
+    display: flex;
+    align-items: flex-start;
+  }
+  &_name_disclaimer {
+    grid-column: input-start/input-end;
+    color: $color-gray;
+    font-size: 1.2rem;
+  }
+  &_submit {
+    grid-column: input-start/input-end;
+    max-width: 7rem;
+  }
+}

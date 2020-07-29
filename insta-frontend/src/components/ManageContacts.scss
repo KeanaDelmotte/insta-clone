@@ -1,0 +1,53 @@
+@import '../variables.scss';
+.manage-contacts {
+  padding: 2rem 5rem;
+  &_heading {
+    margin-top: 0;
+    font-weight: 400;
+    font-size: 2.4rem;
+  }
+  &_info {
+    font-size: 1.6rem;
+  }
+  &_disclaimer {
+    font-size: 1.6rem;
+  }
+  &_synced-contacts {
+    width: 100%;
+  }
+}
+
+.synced-contacts {
+  &_header {
+    display: flex;
+    flex-direction: row;
+    &_amount {
+      font-weight: 500;
+      font-size: 1.6rem;
+      flex-grow: 1;
+      margin: 1rem 0;
+    }
+    &_delete--blue {
+      border: none;
+      background-color: transparentize($color: $color-lightblue, $amount: 0.6);
+      color: white;
+      font-weight: 500;
+      font-size: 1.4rem;
+      font-family: Roboto;
+      padding: 0.5rem;
+      border-radius: 3px;
+      margin-top: 1rem;
+    }
+  }
+}
+.contacts {
+  &_info {
+    font-size: 1.6rem;
+  }
+  &_line {
+    border: none;
+    background-color: $color-lightgray;
+    height: 1px;
+    width: 100%;
+  }
+}

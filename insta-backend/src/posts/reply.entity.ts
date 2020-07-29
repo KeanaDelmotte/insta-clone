@@ -7,6 +7,7 @@ import {
   JoinTable,
   OneToMany,
   ManyToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
 import { Comment } from './comment.entity';
@@ -15,6 +16,9 @@ import { Transform } from 'class-transformer';
 
 @Entity()
 export class Reply extends BaseEntity {
+  @CreateDateColumn()
+  timeCreated: Date;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -41,6 +45,7 @@ export class Reply extends BaseEntity {
   @Transform((user: User) => ({
     id: user.id,
     username: user.username,
+    profilePhoto: user.profilePhoto,
   }))
   user: User;
 

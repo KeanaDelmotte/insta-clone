@@ -6,14 +6,20 @@ import {
   ManyToOne,
   ManyToMany,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from '../auth/user.entity';
 import { Post } from './post.entity';
 import { Transform } from 'class-transformer';
 import { Reply } from './reply.entity';
+import { ProfilePhoto } from '../auth/profilePhoto.entity';
+import { userInfo } from 'os';
 
 @Entity()
 export class Comment extends BaseEntity {
+  @CreateDateColumn()
+  timeCreated: Date;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,10 +31,13 @@ export class Comment extends BaseEntity {
     user => user.comments,
     { eager: true },
   )
-  @Transform((user: User) => ({
-    id: user.id,
-    username: user.username,
-  }))
+  @Transform((user: User) => {
+    return {
+      id: user.id,
+      username: user.username,
+      profilePhoto: user.profilePhoto,
+    };
+  })
   user: User;
 
   @ManyToMany(
@@ -40,6 +49,7 @@ export class Comment extends BaseEntity {
     const transformedUsers = users.map(user => ({
       id: user.id,
       username: user.username,
+      profilePhoto: user.profilePhoto,
     }));
 
     return transformedUsers;
@@ -59,7 +69,14 @@ export class Comment extends BaseEntity {
   @OneToMany(
     type => Reply,
     reply => reply.inReplyTo,
-    { eager: true },
   )
+  @Transform((replies: Reply[]) => {
+    const transformedReplies = replies.map(reply => ({
+      id: reply.id,
+      user: reply.user,
+      contents: reply.contents,
+    }));
+    return transformedReplies;
+  })
   replies: Reply[];
 }

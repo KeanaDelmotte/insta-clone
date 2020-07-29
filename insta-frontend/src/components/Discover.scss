@@ -1,0 +1,221 @@
+@import '../variables.scss';
+.discover {
+  height: 94.5vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: [side-left-start] 1fr [side-left-end content-start] 50vw [content-end side-right-start ] 1fr [side-right-end];
+  // grid-row: 1fr;
+  &_people {
+    grid-column: content-start/content-end;
+    // grid-row: 1 / span 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    max-width: 60vw;
+  }
+  &_explore {
+    grid-column: content-start/content-end;
+    display: flex;
+    flex-wrap: wrap;
+    // grid-row: 1 / span 1;
+  }
+}
+.discover_popupactive {
+  overflow-y: hidden;
+}
+
+.people {
+  &_actions {
+    display: flex;
+    align-items: center;
+  }
+  &_users {
+    display: flex;
+    width: 40vw;
+    overflow-x: scroll;
+    padding: 0;
+    position: relative;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      position: sticky;
+
+      /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fafafa+0,fafafa+100&1+0,0+100 */
+      background: -moz-linear-gradient(
+        left,
+        rgba(250, 250, 250, 1) 0%,
+        rgba(250, 250, 250, 0) 100%
+      ); /* FF3.6-15 */
+      background: -webkit-linear-gradient(
+        left,
+        rgba(250, 250, 250, 1) 0%,
+        rgba(250, 250, 250, 0) 100%
+      ); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(
+        to right,
+        rgba(250, 250, 250, 1) 0%,
+        rgba(250, 250, 250, 0) 100%
+      ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#00fafafa',GradientType=1 ); /* IE6-9 */
+
+      flex: 0 0 1.5rem;
+      left: 0;
+    }
+    &::after {
+      content: '';
+      display: inline-block;
+      position: sticky;
+      /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fafafa+0,fafafa+100&0+0,1+100 */
+      background: -moz-linear-gradient(
+        left,
+        rgba(250, 250, 250, 0) 0%,
+        rgba(250, 250, 250, 1) 100%
+      ); /* FF3.6-15 */
+      background: -webkit-linear-gradient(
+        left,
+        rgba(250, 250, 250, 0) 0%,
+        rgba(250, 250, 250, 1) 100%
+      ); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(
+        to right,
+        rgba(250, 250, 250, 0) 0%,
+        rgba(250, 250, 250, 1) 100%
+      ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00fafafa', endColorstr='#fafafa',GradientType=1 ); /* IE6-9 */
+
+      flex: 0 0 1.6rem;
+      right: -1px;
+    }
+  }
+}
+
+.users {
+  &_user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem;
+    height: 19.5rem;
+    width: 17.5rem;
+    border: 1px solid lightgray;
+    background-color: white;
+    min-width: 17.5rem;
+    border-radius: 3px;
+    &:first-of-type {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+  &_scrollback,
+  &_scrollahead {
+    background-color: transparent;
+    border: none;
+    outline: none;
+  }
+}
+
+.actions {
+  &_info {
+    flex-grow: 1;
+    font-weight: 500;
+  }
+  &_see-all {
+    color: $color-lightblue;
+    font-family: Roboto;
+    font-size: 1.5rem;
+    font-weight: 500;
+    outline: none;
+    &:active {
+      opacity: 60%;
+    }
+  }
+}
+
+.user {
+  &_nav {
+    fill: transparentize($color: #000000, $amount: 0.6);
+  }
+
+  &_reason-for-suggestion {
+    color: gray;
+    font-size: 1.2rem;
+    margin: 0.5rem;
+  }
+  &_username {
+    padding: 0;
+    margin: 0;
+    margin-top: 1rem;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+  &_follow {
+  }
+  &_profile-image {
+    height: 5.5rem;
+    width: 5.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+.link-to-profile {
+  text-decoration: none;
+}
+
+.suggested {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.discover_users--follow {
+  margin-top: 1.5rem;
+}
+
+.actions {
+  &_like,
+  &_comment {
+    color: white;
+    font-size: 1.7rem;
+    font-family: Roboto;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &_share {
+    display: flex;
+    align-items: center;
+  }
+  &_like,
+  &_comment,
+  &_share,
+  &_save {
+    outline: none;
+  }
+}
+
+.comment-icon {
+  transform: scale(-1, 1) translate(-24%, 0);
+}
+
+.like_amount {
+  margin-left: 0.5rem;
+}
+
+.comment_amount {
+  margin-left: 1rem;
+}
+
+.people {
+  &_users {
+    width: 100%;
+  }
+}

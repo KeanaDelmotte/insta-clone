@@ -1,0 +1,9 @@
+.expandable-text {
+  margin: 0;
+  display: inline;
+
+  &_expand {
+    color: darkgray;
+    cursor: pointer;
+  }
+}

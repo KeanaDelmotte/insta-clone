@@ -1,0 +1,26 @@
+.slideshow-arrow {
+  display:  flex;
+  position: absolute;
+  top: 50%;
+  height: 50px;
+  cursor: pointer;
+  align-items: center;
+  transition: transform ease-in 0.1s;
+  &--right {
+    right: 25px;
+  }
+  &--left {
+    left: 25px;
+  }
+  &:hover {
+    transform: scale(1.1);
+  }
+  &-img--right {
+    transform: translateX(2px);
+
+  }
+  &-img--left {
+    transform: translateX(-2px);
+
+  }
+}

@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.customFileName = exports.imageFileFilter = void 0;
 const common_1 = require("@nestjs/common");
 exports.imageFileFilter = (req, file, callback) => {
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mov|avi|wmv|flv|3gp|mp4|mpg)$/)) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mov|avi|wmv|flv|3gp|mp4|jfif|mpg)$/)) {
         return callback(new common_1.BadRequestException('Only image and video files allowed. Try uploading a file that ends in: jpg, jpeg, png, gif, mov, avi, wmw, flv, 3gp, mp4 or mpg'), false);
     }
     callback(null, true);

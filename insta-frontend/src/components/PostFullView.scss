@@ -1,0 +1,255 @@
+@import '../variables.scss';
+
+.fullpost-page {
+  width: 55%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &_line {
+    width: 100%;
+    height: 1px;
+    border: none;
+    background-color: lightgray;
+    order: 2;
+    margin: 5rem 0;
+  }
+}
+
+.page-popup {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  & > .full-post {
+    border: none;
+  }
+
+  &_close {
+    background-color: transparent;
+    border: none;
+    outline: 0;
+    align-self: flex-end;
+    margin: 2rem;
+  }
+}
+.full-post {
+  border: 1px solid lightgray;
+  width: min-content;
+  margin-top: 3rem;
+  height: 60rem;
+  background-color: white;
+  order: 1;
+
+  display: flex;
+  &--popup {
+    top: 25%;
+    bottom: 25%;
+    margin: auto;
+    z-index: 3;
+    position: absolute;
+  }
+  &_media {
+    height: 100%;
+    grid-row: user-start/comment-end;
+    grid-column: media-start/media-end;
+    max-width: 70rem;
+    max-height: 85rem;
+    object-fit: cover;
+  }
+
+  &_user {
+    grid-row: user-start/user-end;
+    grid-column: info-start/info-end;
+
+    display: flex;
+    align-items: center;
+  }
+  &_comment-section {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &_hamburger {
+    cursor: pointer;
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 0.5rem;
+  }
+  &_actions-and-info {
+    grid-row: actions-start/actions-end;
+    grid-column: info-start/info-end;
+    padding: 1rem;
+  }
+  &_line {
+    &--header,
+    &--comment-section,
+    &--actions {
+      height: 1px;
+      width: 100%;
+      border: none;
+      background-color: $super-lightgray;
+      // margin: 0;
+    }
+    &--header {
+      grid-row: headerline-start/headerline-end;
+      grid-column: info-start/info-end;
+    }
+    &--comment-section {
+      grid-column: info-start/info-end;
+      grid-row: commentsline-start/commentsline-end;
+    }
+    &--actions {
+      grid-column: info-start/info-end;
+      grid-row: actionsline-start/actionsline-end;
+    }
+  }
+
+  &_comment {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    // grid-column: info-start/info-end;
+    grid-row: comment-start/comment-end;
+  }
+  &_info {
+    width: 33.5rem;
+    grid-row: 1/-1;
+    grid-column: info-start/info-end;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.user {
+  &_img {
+    height: 3rem;
+    width: 3rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 1.5rem;
+  }
+  &_middot {
+    margin: 0.5rem;
+    font-size: 3rem;
+  }
+  &_username {
+    margin-top: 0;
+    text-decoration: none;
+    color: black;
+  }
+}
+
+.actions-and-info {
+  &_actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  &_info {
+    padding: 0.5rem;
+    padding-bottom: 0;
+  }
+}
+.actions {
+  &_like,
+  &_share,
+  &_comment,
+  &_save > svg {
+    cursor: pointer;
+  }
+}
+
+.info {
+  &_likes {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0.5rem 0;
+  }
+  &_timecreated {
+    color: #8e8e8e;
+    margin: 0.5rem 0;
+    margin-bottom: 0;
+  }
+}
+
+.comment-section {
+  &_description {
+    display: flex;
+    align-items: last baseline;
+    // padding: 2rem;
+    text-overflow: ellipsis;
+  }
+}
+.description {
+  &_userimg {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.5rem;
+  }
+
+  &_text {
+    // display: flex;
+    // flex-wrap: nowrap;
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-left: 1rem;
+  }
+}
+
+.text {
+  &_user--name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-right: 0.5rem;
+    text-decoration: none;
+    color: black;
+  }
+}
+
+.comment {
+  &_input,
+  &_submit {
+    font-size: 1.5rem;
+  }
+  &_submit {
+    cursor: pointer;
+    &:disabled {
+      opacity: 30%;
+    }
+  }
+}
+
+.post-user_more-posts {
+  width: 100%;
+  order: 2;
+  &_heading {
+    margin-left: 1rem;
+    font-size: 1.4rem;
+    color: gray;
+    font-weight: 500;
+    &_user {
+      color: black;
+    }
+  }
+  &_posts {
+    display: flex;
+    justify-content: center;
+  }
+}

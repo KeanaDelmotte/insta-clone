@@ -1,0 +1,22 @@
+.slideshow-dots {
+  position: absolute;
+  bottom:25px ;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dots_dot {
+  padding: 3px;
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  
+  background: transparentize(white, 0.6);
+  &--active {
+  background: white;
+
+  }
+
+}

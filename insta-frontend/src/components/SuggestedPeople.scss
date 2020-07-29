@@ -1,0 +1,18 @@
+@import '../variables.scss';
+.users_suggested {
+  display: flex;
+  flex-direction: column;
+  grid-column: posts-start/sidebar-end;
+  justify-self: center;
+  width: 60%;
+  max-width: 60rem;
+  margin: 5rem auto;
+}
+
+.suggested {
+  &_userlist {
+    padding: 1rem;
+    background-color: white;
+    border: 1px solid $super-lightgray;
+  }
+}

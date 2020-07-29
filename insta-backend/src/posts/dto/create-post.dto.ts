@@ -4,6 +4,5 @@ export class CreatePostDto {
   @IsNotEmpty()
   description: string;
 
-  @IsOptional()
-  tags?: string;
+  tags?: string | undefined;
 }

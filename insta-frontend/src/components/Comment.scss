@@ -1,0 +1,112 @@
+@import '../variables.scss';
+.reply {
+  padding: 0 0 0 5rem;
+}
+.comment {
+  font-size: 1.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+  // displary: grid;
+  // grid-template-rows: ;
+  &_contents {
+    display: flex;
+    align-items: center;
+  }
+
+  &_actions-and-info {
+    display: flex;
+    padding-left: 5rem;
+    color: $color-gray;
+    font-size: 1.2rem;
+  }
+  &_view-replies {
+    color: $color-gray;
+    font-weight: 500;
+    font-family: Roboto;
+
+    background-color: transparent;
+    border: none;
+    outline: 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding-left: 5rem;
+  }
+}
+
+.contents {
+  // display: flex;
+  margin: 0;
+
+  &_username {
+    font-weight: 500;
+    margin: 0;
+    margin-right: 0.5rem;
+    text-decoration: none;
+    color: black;
+    // display: flex;
+    // align-items: flex-start;
+    display: inline;
+  }
+  &_content {
+    flex-grow: 1;
+    margin: 0;
+    margin-left: 0.5rem;
+    font-weight: 400;
+    display: inline;
+  }
+  &_like {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+    outline: 0;
+  }
+
+  &_userimg {
+    height: 3rem;
+    width: 3rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 1.5rem;
+  }
+}
+
+.replies {
+  &_line {
+    border: none;
+    height: 1px;
+    background-color: $color-gray;
+    width: 2.5rem;
+    margin-right: 1rem;
+  }
+}
+
+.actions-and-info {
+  &_timeposted {
+    margin-right: 1rem;
+  }
+  &_likes {
+    font-weight: 500;
+    margin-right: 1rem;
+  }
+  &_reply {
+    background-color: transparent;
+    border: none;
+    font-weight: 500;
+    outline: 0;
+    color: $color-gray;
+    font-family: Roboto;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
+.userimg--link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -6,6 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
@@ -15,6 +16,7 @@ const jwt_strategy_1 = require("./jwt-strategy");
 const passport_1 = require("@nestjs/passport");
 const jwt_1 = require("@nestjs/jwt");
 const posts_repository_1 = require("../posts/posts.repository");
+const profilePhoto_entity_1 = require("./profilePhoto.entity");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -23,15 +25,12 @@ AuthModule = __decorate([
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.register({
                 secret: process.env.JWT_SECRET || 'topSecret51',
-                signOptions: {
-                    expiresIn: 3600,
-                },
             }),
-            typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository, posts_repository_1.PostsRepository]),
+            typeorm_1.TypeOrmModule.forFeature([user_repository_1.UserRepository, posts_repository_1.PostsRepository, profilePhoto_entity_1.ProfilePhoto]),
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
-        exports: [jwt_strategy_1.JwtStrategy, passport_1.PassportModule],
+        exports: [jwt_strategy_1.JwtStrategy, passport_1.PassportModule, auth_service_1.AuthService],
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;
