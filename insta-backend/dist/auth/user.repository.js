@@ -1,4 +1,16 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,20 +20,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRepository = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 const bcrypt = __importStar(require("bcryptjs"));
+const profilePhoto_entity_1 = require("./profilePhoto.entity");
 const common_1 = require("@nestjs/common");
 let UserRepository = class UserRepository extends typeorm_1.Repository {
-    async signUp(authCredentialsDto) {
-        const { username, password } = authCredentialsDto;
-        const user = this.create({ username, salt: await bcrypt.genSalt() });
+    async signUp(signUpDto, profilePhoto) {
+        const { username, password, name } = signUpDto;
+        const user = this.create({
+            username,
+            salt: await bcrypt.genSalt(),
+            name,
+        });
         user.password = await this.hashPassword(password, user.salt);
+        if (profilePhoto) {
+            const userPhoto = new profilePhoto_entity_1.ProfilePhoto();
+            userPhoto.filename = profilePhoto.filename;
+            userPhoto.url = profilePhoto.path;
+            await userPhoto.save();
+            user.profilePhoto = userPhoto;
+        }
         try {
             await user.save();
         }
@@ -33,6 +58,8 @@ let UserRepository = class UserRepository extends typeorm_1.Repository {
                 throw new common_1.InternalServerErrorException('Failed to create user');
             }
         }
+        console.log(user);
+        return user;
     }
     async validateUserPassword(authcredentialsDto) {
         const { username, password } = authcredentialsDto;
@@ -61,7 +88,7 @@ let UserRepository = class UserRepository extends typeorm_1.Repository {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
         try {
-            user.save();
+            await user.save();
         }
         catch (error) {
             throw new common_1.InternalServerErrorException('Could not save user');

@@ -1,0 +1,49 @@
+@import '../variables.scss';
+.apps-and-websites {
+  padding: 5rem;
+  &_heading {
+    font-weight: 300;
+    font-size: 2.8rem;
+  }
+  &_navitem {
+    font-size: 1.4rem;
+    background-color: transparent;
+    border: none;
+    padding: 1rem 20%;
+    color: lightgray;
+    border-bottom: 1px solid lightgray;
+    outline: none;
+    font-family: Roboto;
+    font-weight: 500;
+    transition: all 0.3s;
+    &--active {
+      color: black;
+      border-bottom: 1px solid black;
+    }
+  }
+  &_active {
+    &_info {
+    }
+  }
+}
+
+.active {
+  &_info,
+  &_info {
+    font-size: 1.6rem;
+  }
+  &_no-auth {
+    font-size: 1.6rem;
+    color: $color-gray;
+  }
+}
+
+.expired {
+  &_info {
+    font-size: 1.6rem;
+  }
+  &_no-auth {
+    font-size: 1.6rem;
+    color: $color-gray;
+  }
+}

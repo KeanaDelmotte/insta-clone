@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, Like } from 'typeorm';
 import { Post } from './post.entity';
 import { Photo } from './photo.entity';
 import {
@@ -18,20 +18,35 @@ import { UserRepository } from '../auth/user.repository';
 export class PostsRepository extends Repository<Post> {
   async getAllPosts(filterDto: GetPostDto): Promise<Post[]> {
     const { search } = filterDto;
-    const query = this.createQueryBuilder('post');
 
     if (search) {
-      query.andWhere('(post.description LIKE :search)', {
-        search: `%${search}%`,
+      const posts = await this.find({
+        relations: [
+          'user',
+          'likes',
+          'comments',
+          'comments.replies',
+          'comments.likes',
+          'comments.replies.user',
+        ],
+        where: {
+          description: Like(`%${search}%`),
+        },
       });
-    }
-
-    try {
-      const posts = await query.getMany();
       return posts;
-    } catch (error) {
-      throw new InternalServerErrorException();
     }
+    const posts = await this.find({
+      relations: [
+        'user',
+        'likes',
+        'comments',
+        'comments.replies',
+        'comments.likes',
+        'comments.replies.user',
+      ],
+    });
+
+    return posts;
   }
   async comment(
     postId: number,
@@ -39,7 +54,9 @@ export class PostsRepository extends Repository<Post> {
     user: User,
   ): Promise<Comment> {
     const comment = new Comment();
-    const post: Post = await this.findOne(postId, { relations: ['comments'] });
+    const post: Post = await this.findOne(postId, {
+      relations: ['comments', 'user'],
+    });
 
     if (post) {
       comment.contents = createCommentDto.contents;

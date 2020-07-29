@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PostsController = void 0;
 const common_1 = require("@nestjs/common");
 const posts_service_1 = require("./posts.service");
 const platform_express_1 = require("@nestjs/platform-express");
@@ -42,6 +43,9 @@ let PostsController = class PostsController {
     }
     getAllPosts(filterDto) {
         return this.postsService.getAllPosts(filterDto);
+    }
+    getAllRelevantPosts(user) {
+        return this.postsService.getAllRelevantPosts(user);
     }
     getPostById(id) {
         return this.postsService.getPostById(id);
@@ -145,6 +149,14 @@ __decorate([
     __metadata("design:paramtypes", [getposts_dto_1.GetPostDto]),
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "getAllPosts", null);
+__decorate([
+    common_1.Get('/relevant'),
+    common_1.UseGuards(passport_1.AuthGuard()),
+    __param(0, get_user_decorator_1.GetUser()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:returntype", void 0)
+], PostsController.prototype, "getAllRelevantPosts", null);
 __decorate([
     common_1.Get(':id'),
     __param(0, common_1.Param('id', common_1.ParseIntPipe)),

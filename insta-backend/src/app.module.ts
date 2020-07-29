@@ -7,6 +7,7 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { PostsModule } from './posts/posts.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { FollowModule } from './follow/follow.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FollowModule } from './follow/follow.module';
     PostsModule,
     MulterModule.register({ dest: './files' }),
     FollowModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

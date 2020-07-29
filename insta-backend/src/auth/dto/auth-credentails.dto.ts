@@ -1,4 +1,5 @@
 import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import { ProfilePhoto } from '../profilePhoto.entity';
 
 export class AuthCredentialsDto {
   @IsString()

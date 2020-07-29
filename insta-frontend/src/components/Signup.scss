@@ -1,0 +1,83 @@
+.signup {
+  height: 60vh;
+
+  &_form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+  }
+}
+.form_submit,
+.login--facebook {
+  background-color: #0095f6;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 0.7rem;
+  font-weight: 500;
+  font-family: Roboto;
+}
+
+.login--facebook {
+  width: 80%;
+}
+
+.form_wrap {
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  // align-items: stretch;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.signin {
+  padding: 2rem;
+  box-sizing: border-box;
+  &_button {
+    background-color: transparent;
+    font-size: inherit;
+    border: none;
+    font-family: inherit;
+    padding: 0;
+    color: #0095f6;
+  }
+}
+.signin,
+.signup {
+  font-size: 1.5rem;
+  background: white;
+  width: 17vw;
+  margin: 5rem auto;
+  border: 1px solid darkgray;
+  display: flex;
+  justify-content: center;
+}
+
+.wrap_or {
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+.or_line {
+  height: 1px;
+  width: 35%;
+  border: none;
+  background-color: darkgray;
+  color: darkgray;
+}
+
+.instagram-text-logo {
+  height: 51px;
+  width: 175px;
+}
+
+.wrap {
+  &_info {
+    font-weight: 500;
+    color: gray;
+    font-size: 1.7rem;
+    text-align: center;
+  }
+}

@@ -4,6 +4,9 @@ import { AuthCredentialsDto } from './dto/auth-credentails.dto';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeUsernameDto } from './dto/change-username.dto';
+import { ProfilePhoto } from './profilePhoto.entity';
+import { PhotoResponseDto } from '../posts/dto/photo-response.dto';
+import { SignUpDto } from './dto/signUpDto.dto';
 import {
   ConflictException,
   InternalServerErrorException,
@@ -13,18 +16,28 @@ import {
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialsDto;
+  async signUp(
+    signUpDto: SignUpDto,
+    profilePhoto?: PhotoResponseDto,
+  ): Promise<User> {
+    const { username, password, name } = signUpDto;
 
-    // const usernameUnavailable = this.findOne({ username });
-
-    // if (usernameUnavailable) {
-    //   throw new ConflictException('Username already exists');
-    // }
-
-    const user = this.create({ username, salt: await bcrypt.genSalt() });
+    const user = this.create({
+      username,
+      salt: await bcrypt.genSalt(),
+      name,
+    });
 
     user.password = await this.hashPassword(password, user.salt);
+
+    if (profilePhoto) {
+      const userPhoto = new ProfilePhoto();
+      userPhoto.filename = profilePhoto.filename;
+      userPhoto.url = profilePhoto.path;
+      await userPhoto.save();
+
+      user.profilePhoto = userPhoto;
+    }
 
     try {
       await user.save();
@@ -37,14 +50,16 @@ export class UserRepository extends Repository<User> {
         throw new InternalServerErrorException('Failed to create user');
       }
     }
+    console.log(user);
+    return user;
   }
 
   async validateUserPassword(
     authcredentialsDto: AuthCredentialsDto,
   ): Promise<string> {
     const { username, password } = authcredentialsDto;
-    const user = await this.findOne({ username });
 
+    const user = await this.findOne({ username });
     if (user && (await user.validatePassword(password))) {
       return user.username;
     } else {
@@ -71,7 +86,7 @@ export class UserRepository extends Repository<User> {
     }
 
     try {
-      user.save();
+      await user.save();
     } catch (error) {
       throw new InternalServerErrorException('Could not save user');
     }

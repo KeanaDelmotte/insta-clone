@@ -1,0 +1,129 @@
+@import '../variables.scss';
+.message-page {
+  background-color: white;
+  display: grid;
+  width: 50%;
+  margin: 2rem auto;
+  height: 90%;
+  border: 1px solid lightgray;
+  min-height: 90vh;
+
+  grid-template-columns: [ messages-start] 35rem [messages-end compose-start ] 1fr [compose-end ];
+
+  &_messages {
+    grid-column: messages-start/messages-end;
+    border-right: 1px solid lightgray;
+    display: flex;
+    flex-direction: column;
+  }
+  &_compose {
+    grid-column: compose-start/compose-end;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.messages {
+  &_navbar {
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    padding: 0 1.5rem;
+  }
+  &_chat {
+    padding: 1rem;
+    width: 60%;
+    display: grid;
+    // align-items: center;
+    // justify-content: flex-start;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: repeat(2, 1fr);
+    &::before {
+      display: block;
+      content: '';
+      background-color: $super-lightgray;
+      height: 1.5rem;
+      width: 12rem;
+      grid-row: 1 / span 1;
+      grid-column: 2 / span 1;
+      align-self: end;
+      margin-bottom: 0.5rem;
+      border-radius: 3px;
+    }
+    &::after {
+      display: block;
+
+      content: '';
+      background-color: $super-lightgray;
+      height: 1.5rem;
+      width: 7rem;
+      order: 3;
+      grid-column: 2 / span 1;
+      grid-row: 2 / span 1;
+      align-self: start;
+      margin-top: 0.5rem;
+      border-radius: 3px;
+    }
+  }
+}
+
+.chat {
+  &_userimg {
+    height: 5.5rem;
+    width: 5.5rem;
+    background-color: $super-lightgray;
+    border-radius: 50%;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 2;
+  }
+}
+.navbar {
+  &_title {
+    flex-grow: 1;
+    font-size: 1.6rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &_compose {
+    background-color: transparent;
+    border: none;
+    outline: 0;
+  }
+}
+
+.compose {
+  &_icon {
+    height: 9rem;
+    width: 9rem;
+    border-radius: 50%;
+    border: 1.5px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &_your-messages {
+    font-size: 2rem;
+    margin: 2rem 0 0 0;
+  }
+  &_info {
+    font-size: 1.4rem;
+    color: $color-gray;
+    margin: 1rem;
+  }
+  &_send-message {
+    background-color: $color-lightblue;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1.4rem;
+    font-family: Roboto;
+    font-weight: 500;
+    margin-top: 1rem;
+  }
+}

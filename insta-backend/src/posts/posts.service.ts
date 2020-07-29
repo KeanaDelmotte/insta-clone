@@ -18,8 +18,9 @@ import { GetPostDto } from './dto/getposts.dto';
 import { UserRepository } from '../auth/user.repository';
 import { Reply } from './reply.entity';
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
-import * as request from 'supertest';
-import { json } from 'express';
+
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/notification.entity';
 
 @Injectable()
 export class PostsService {
@@ -32,6 +33,7 @@ export class PostsService {
     private replyRepository: Repository<Reply>,
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
+    private notificationService: NotificationsService,
   ) {}
 
   async createPost(
@@ -39,9 +41,10 @@ export class PostsService {
     user: User,
     photos: PhotoResponseDto[],
   ): Promise<Post> {
+    const reqUser = await this.userRepository.findOne(user.id);
     const { description, tags } = createPostDto;
 
-    const tagged = JSON.parse(tags);
+    const tagged: string[] = tags ? JSON.parse(tags) : [];
 
     if (photos.length < 1 || !description) {
       throw new BadRequestException(
@@ -61,7 +64,6 @@ export class PostsService {
         return user;
       }),
     );
-
     if (taggedUsers.find(tag => tag.id === user.id)) {
       throw new ForbiddenException('You cant tag yourself');
     }
@@ -72,7 +74,7 @@ export class PostsService {
     post.description = description;
     post.user = user;
 
-    user.taggedIn = [...user.taggedIn, post];
+    reqUser.taggedIn = [...reqUser.taggedIn, post];
 
     const newPhotos = photos.map(photo => {
       const newPhoto = new Photo();
@@ -95,6 +97,19 @@ export class PostsService {
       await Promise.all(newPhotos.map(photo => photo.save()));
     } catch (error) {
       throw new InternalServerErrorException('could not save photos');
+    }
+
+    if (tagged.length >= 1) {
+      await Promise.all(
+        taggedUsers.map(u => {
+          this.notificationService.createNotification(
+            user,
+            u,
+            NotificationType.TAGGED,
+            post,
+          );
+        }),
+      );
     }
 
     return post;
@@ -132,8 +147,45 @@ export class PostsService {
     return this.postsRepository.getAllPosts(filterDto);
   }
 
+  async getAllRelevantPosts(user) {
+    const posts = await this.postsRepository.find({
+      relations: [
+        'user',
+        'user.followers',
+        'user.profilePhoto',
+        'likes',
+        'comments',
+        'comments.user',
+        'comments.user.profilePhoto',
+        'comments.replies',
+        'comments.replies.user',
+      ],
+    });
+    const relevantPosts = [];
+    posts.forEach(post => {
+      if (post.user.followers.find(u => u.id === user.id)) {
+        relevantPosts.push(post);
+      } else if (post.likes.length > 100) {
+        relevantPosts.push(post);
+      } else if (post.user.followers.length > 100) {
+        relevantPosts.push(post);
+      }
+    });
+
+    return relevantPosts;
+  }
+
   async getAllUserPosts(userId: number): Promise<Post[]> {
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findOne(userId, {
+      relations: [
+        'posts',
+        'posts.comments',
+        'posts.likes',
+        'posts.comments.replies',
+        'posts.comments.replies.user',
+        'posts.user',
+      ],
+    });
 
     if (!user) {
       throw new NotFoundException(`User with id ${userId} does not exist`);
@@ -142,7 +194,16 @@ export class PostsService {
   }
   async getPostById(
     id: number,
-    relations = ['comments', 'likes', 'photos', 'user', 'saves', 'tags'],
+    relations = [
+      'comments',
+      'comments.likes',
+      'likes',
+      'photos',
+      'user',
+      'saves',
+      'tags',
+      'user.posts',
+    ],
   ): Promise<Post> {
     const post = await this.postsRepository.findOne(id, {
       relations: relations,
@@ -154,7 +215,7 @@ export class PostsService {
   }
 
   async likePost(postId: number, user: User): Promise<Post> {
-    const post = await this.getPostById(postId, ['likes']);
+    const post = await this.getPostById(postId, ['likes', 'user']);
 
     const userLikedpost = post.likes.find(u => u.id === user.id);
     if (!userLikedpost) {
@@ -168,6 +229,13 @@ export class PostsService {
     } catch (error) {
       throw new InternalServerErrorException('Could not like post');
     }
+
+    await this.notificationService.createNotification(
+      user,
+      post.user,
+      NotificationType.LIKED_POST,
+      post,
+    );
     return post;
   }
 
@@ -248,7 +316,24 @@ export class PostsService {
     createCommentDto: CreateCommentDto,
     user: User,
   ): Promise<Comment> {
-    return this.postsRepository.comment(postId, createCommentDto, user);
+    const reqUser = await this.userRepository.findOne(user.id, {
+      relations: ['profilePhoto'],
+    });
+    const comment = await this.postsRepository.comment(
+      postId,
+      createCommentDto,
+      reqUser,
+    );
+    console.log(`notification thing`, comment.post.user);
+
+    await this.notificationService.createNotification(
+      user,
+      comment.post.user,
+      NotificationType.COMMENTED,
+      comment.post,
+      comment.contents,
+    );
+    return comment;
   }
 
   async deleteComment(commentId, user: User): Promise<void> {
@@ -263,13 +348,25 @@ export class PostsService {
     await removingcomment.remove();
   }
   async getAllComments(postId: number): Promise<Comment[]> {
-    const post = await this.getPostById(postId, ['comments']);
+    const post = await this.getPostById(postId, [
+      'comments',
+      'comments.replies',
+      // 'comments.user.profilePhoto',
+    ]);
+    // console.log(post.comments[0].user.profilePhoto);
+
     return post.comments;
   }
 
   async getCommentById(commentId: string): Promise<Comment> {
     const comment = await this.commentRepository.findOne(commentId, {
-      relations: ['replies', 'likes', 'user'],
+      relations: [
+        'replies',
+        'likes',
+        'user',
+        'user.profilePhoto',
+        'replies.user',
+      ],
     });
     if (!comment) {
       throw new NotFoundException(
@@ -284,7 +381,7 @@ export class PostsService {
       relations: ['likedComments'],
     });
     const comment = await this.commentRepository.findOne(commentId, {
-      relations: ['likes'],
+      relations: ['likes', 'post', 'post.user'],
     });
 
     if (!comment) {
@@ -310,6 +407,12 @@ export class PostsService {
     } catch (error) {
       throw new InternalServerErrorException('Could not save like');
     }
+    this.notificationService.createNotification(
+      reqUser,
+      comment.user,
+      NotificationType.LIKED_COMMENT,
+      comment.post,
+    );
     return comment.likes;
   }
 
@@ -355,7 +458,7 @@ export class PostsService {
   ) {
     const { contents } = createCommentDto;
     const comment = await this.commentRepository.findOne(commentId, {
-      relations: ['replies'],
+      relations: ['replies', 'post', 'post.user'],
     });
     if (!comment) {
       throw new NotFoundException(
@@ -383,7 +486,14 @@ export class PostsService {
       throw new InternalServerErrorException('Could not reply to comment');
     }
 
-    return comment.replies;
+    this.notificationService.createNotification(
+      reqUser,
+      reply.inReplyTo.user,
+      NotificationType.REPLIED_TO_COMMENT,
+      comment.post,
+      reply.contents,
+    );
+    return reply;
   }
 
   async getAllCommentReplies(commentId) {
@@ -416,7 +526,7 @@ export class PostsService {
 
   async likeReply(replyId: number, reqUser: User) {
     const reply = await this.replyRepository.findOne(replyId, {
-      relations: ['likes'],
+      relations: ['likes', 'inReplyTo'],
     });
     if (!reply) {
       throw new NotFoundException(
@@ -444,6 +554,13 @@ export class PostsService {
       throw new InternalServerErrorException('Could not like reply');
     }
 
+    this.notificationService.createNotification(
+      reqUser,
+      reply.user,
+      NotificationType.LIKED_REPLY,
+      reply.inReplyTo.post,
+      reply.contents,
+    );
     return reply.likes;
   }
 

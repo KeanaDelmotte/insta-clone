@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Reply = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const comment_entity_1 = require("./comment.entity");
@@ -39,6 +40,7 @@ __decorate([
     class_transformer_1.Transform((user) => ({
         id: user.id,
         username: user.username,
+        profilePhoto: user.profilePhoto,
     })),
     __metadata("design:type", user_entity_1.User)
 ], Reply.prototype, "user", void 0);

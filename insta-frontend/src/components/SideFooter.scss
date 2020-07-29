@@ -1,0 +1,67 @@
+.sidefooter {
+  right: 0;
+  position: fixed;
+  margin: 5rem 0;
+  display: flex;
+  flex-direction: column;
+
+  max-width: 25rem;
+
+  &_user {
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+  }
+  &_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &_user {
+    &_profile-image {
+      height: 5.6rem;
+      width: 5.6rem;
+      margin-right: 1rem;
+      border-radius: 50%;
+      background-position: center;
+      object-fit: cover;
+    }
+
+    &_username {
+      font-size: 1.5rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      // align-items: center;
+      justify-content: center;
+    }
+    &_name {
+      font-weight: 300;
+      color: gray;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.actions {
+  &_info {
+    font-size: 1.5rem;
+    color: gray;
+    font-weight: 500;
+  }
+  &_see-all {
+    font-size: 1.2rem;
+    background-color: transparent;
+    border: none;
+    font-weight: 500;
+    font-family: Roboto;
+    cursor: pointer;
+  }
+}
+
+.link-to {
+  text-decoration: none;
+  height: fit-content;
+  width: fit-content;
+}

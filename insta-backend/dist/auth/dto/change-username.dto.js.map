@@ -1,1 +1,1 @@
-{"version":3,"file":"change-username.dto.js","sourceRoot":"","sources":["../../../src/auth/dto/change-username.dto.ts"],"names":[],"mappings":";;;;;;;;;;;AAAA,qDAAiE;AACjE,MAAa,iBAAiB;CAO7B;AAHC;IAHC,0BAAQ,EAAE;IACV,2BAAS,CAAC,CAAC,CAAC;IACZ,2BAAS,CAAC,EAAE,CAAC;;sDACM;AAJtB,8CAOC"}
+{"version":3,"file":"change-username.dto.js","sourceRoot":"","sources":["../../../src/auth/dto/change-username.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAiE;AACjE,MAAa,iBAAiB;CAO7B;AAHC;IAHC,0BAAQ,EAAE;IACV,2BAAS,CAAC,CAAC,CAAC;IACZ,2BAAS,CAAC,EAAE,CAAC;;sDACM;AAJtB,8CAOC"}

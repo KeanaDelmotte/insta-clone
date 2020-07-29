@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Comment = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("../auth/user.entity");
 const post_entity_1 = require("./post.entity");
@@ -26,10 +27,13 @@ __decorate([
 ], Comment.prototype, "contents", void 0);
 __decorate([
     typeorm_1.ManyToOne(type => user_entity_1.User, user => user.comments, { eager: true }),
-    class_transformer_1.Transform((user) => ({
-        id: user.id,
-        username: user.username,
-    })),
+    class_transformer_1.Transform((user) => {
+        return {
+            id: user.id,
+            username: user.username,
+            profilePhoto: user.profilePhoto,
+        };
+    }),
     __metadata("design:type", user_entity_1.User)
 ], Comment.prototype, "user", void 0);
 __decorate([
@@ -38,6 +42,7 @@ __decorate([
         const transformedUsers = users.map(user => ({
             id: user.id,
             username: user.username,
+            profilePhoto: user.profilePhoto,
         }));
         return transformedUsers;
     }),
@@ -51,7 +56,15 @@ __decorate([
     __metadata("design:type", post_entity_1.Post)
 ], Comment.prototype, "post", void 0);
 __decorate([
-    typeorm_1.OneToMany(type => reply_entity_1.Reply, reply => reply.inReplyTo, { eager: true }),
+    typeorm_1.OneToMany(type => reply_entity_1.Reply, reply => reply.inReplyTo),
+    class_transformer_1.Transform((replies) => {
+        const transformedReplies = replies.map(reply => ({
+            id: reply.id,
+            user: reply.user,
+            contents: reply.contents,
+        }));
+        return transformedReplies;
+    }),
     __metadata("design:type", Array)
 ], Comment.prototype, "replies", void 0);
 Comment = __decorate([

@@ -8,21 +8,34 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../posts/comment.entity';
 import { Exclude, Transform } from 'class-transformer';
 import { Reply } from '../posts/reply.entity';
+import { Notification } from '../notifications/notification.entity';
+import { Photo } from '../posts/photo.entity';
+import { ProfilePhoto } from './profilePhoto.entity';
+import { Optional } from '@nestjs/common';
 
 @Entity()
 @Unique(['username'])
 export class User extends BaseEntity {
+  @CreateDateColumn()
+  dateJoined: Date;
+
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   username: string;
+
+  @Column({ nullable: true })
+  name?: string;
 
   @Exclude()
   @Column()
@@ -32,13 +45,15 @@ export class User extends BaseEntity {
   @Exclude()
   salt: string;
 
+  @OneToOne(type => ProfilePhoto, { eager: true })
+  @JoinColumn()
+  profilePhoto: ProfilePhoto;
+
   @OneToMany(
     type => Post,
     post => post.user,
-    { eager: true },
   )
-  @JoinTable()
-  posts?: Post[];
+  posts: Post[];
 
   async validatePassword(password: string) {
     const hash = await bcrypt.hash(password, this.salt);
@@ -66,6 +81,7 @@ export class User extends BaseEntity {
     const transformedComments = comments.map(comment => ({
       id: comment.id,
       contents: comment.contents,
+      user: comment.user,
     }));
     return transformedComments;
   })
@@ -79,10 +95,10 @@ export class User extends BaseEntity {
     const transformedFollowers = followers.map(follower => ({
       id: follower.id,
       username: follower.username,
+      profilePhoto: follower.profilePhoto,
     }));
     return transformedFollowers;
   })
-  @JoinTable()
   followers: User[];
 
   @JoinTable()
@@ -94,6 +110,7 @@ export class User extends BaseEntity {
     const transformedFollowings = followings.map(following => ({
       id: following.id,
       username: following.username,
+      profilePhoto: following.profilePhoto,
     }));
     return transformedFollowings;
   })
@@ -102,6 +119,7 @@ export class User extends BaseEntity {
   @OneToMany(
     type => Reply,
     reply => reply.user,
+    { eager: true },
   )
   @JoinTable()
   replies: Reply[];
@@ -127,4 +145,18 @@ export class User extends BaseEntity {
     { eager: true },
   )
   taggedIn: Post[];
+
+  @Exclude()
+  @OneToMany(
+    type => Notification,
+    notification => notification.receiver,
+  )
+  notifications: Notification[];
+
+  @Exclude()
+  @OneToMany(
+    type => Notification,
+    notification => notification.initiator,
+  )
+  notificationsInitiated: Notification[];
 }

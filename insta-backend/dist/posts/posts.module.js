@@ -6,6 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PostsModule = void 0;
 const common_1 = require("@nestjs/common");
 const posts_controller_1 = require("./posts.controller");
 const posts_service_1 = require("./posts.service");
@@ -17,6 +18,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const comment_entity_1 = require("./comment.entity");
 const user_repository_1 = require("../auth/user.repository");
 const reply_entity_1 = require("./reply.entity");
+const notifications_module_1 = require("../notifications/notifications.module");
 let PostsModule = class PostsModule {
 };
 PostsModule = __decorate([
@@ -26,9 +28,11 @@ PostsModule = __decorate([
             passport_1.PassportModule,
             auth_module_1.AuthModule,
             platform_express_1.MulterModule.register({ dest: './files' }),
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [posts_controller_1.PostsController],
         providers: [posts_service_1.PostsService],
+        exports: [posts_service_1.PostsService],
     })
 ], PostsModule);
 exports.PostsModule = PostsModule;

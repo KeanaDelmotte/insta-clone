@@ -41,6 +41,7 @@ export class Reply extends BaseEntity {
   @Transform((user: User) => ({
     id: user.id,
     username: user.username,
+    profilePhoto: user.profilePhoto,
   }))
   user: User;
 

@@ -1,0 +1,33 @@
+.signin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    &_input {
+      height: 36px;
+      font-size: 12px;
+      background-color: #fafafa;
+      outline: none;
+      border: 1px solid lightgray;
+      border-radius: 3px;
+      width: 80%;
+      padding: 9px 8px 7px 8px;
+      box-sizing: border-box;
+      transition: all 10s;
+
+      &:focus {
+        border: 1px solid gray;
+        &::-webkit-input-placeholder {
+          font-size: 10px;
+          transform: translateY(-5px);
+        }
+      }
+    }
+  }
+}

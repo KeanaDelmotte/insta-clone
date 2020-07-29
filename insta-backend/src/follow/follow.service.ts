@@ -8,12 +8,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from '../auth/user.repository';
 import { User } from '../auth/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/notification.entity';
 
 @Injectable()
 export class FollowService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
+
+    private notificationService: NotificationsService,
   ) {}
 
   async followUser(userId: number, followerId: number): Promise<User[]> {
@@ -57,6 +61,11 @@ export class FollowService {
         throw new InternalServerErrorException('Could not save follower');
       }
     }
+    this.notificationService.createNotification(
+      followerUser,
+      user,
+      NotificationType.FOLLOWED,
+    );
 
     return followerUser.following;
   }

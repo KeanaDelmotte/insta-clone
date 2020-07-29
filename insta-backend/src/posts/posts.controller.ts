@@ -76,6 +76,11 @@ export class PostsController {
   getAllPosts(@Query(ValidationPipe) filterDto: GetPostDto) {
     return this.postsService.getAllPosts(filterDto);
   }
+  @Get('/relevant')
+  @UseGuards(AuthGuard())
+  getAllRelevantPosts(@GetUser() user: User) {
+    return this.postsService.getAllRelevantPosts(user);
+  }
 
   @Get(':id')
   getPostById(@Param('id', ParseIntPipe) id: number) {

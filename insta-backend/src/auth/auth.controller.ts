@@ -12,6 +12,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentails.dto';
@@ -22,6 +23,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChangeUsernameDto } from './dto/change-username.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
 import { Param } from '@nestjs/common';
+import { timingSafeEqual } from 'crypto';
+import { FilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { customFileName, imageFileFilter } from '../utils/post.utils';
+import { PhotoResponseDto } from '../posts/dto/photo-response.dto';
+import { ChangeProfilePhotoDto } from './dto/changephoto.dto';
+import { ProfilePhoto } from './profilePhoto.entity';
+import { SignUpDto } from './dto/signUpDto.dto';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -29,10 +38,38 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
+  @UseInterceptors(
+    FileInterceptor('profilePhoto', {
+      storage: diskStorage({
+        destination: './files',
+        filename: customFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
   signUp(
-    @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
-  ): Promise<void> {
-    return this.authService.signUp(authCredentialsDto);
+    @Body(ValidationPipe) signUpDto: SignUpDto,
+    @UploadedFile() profilePhoto?: PhotoResponseDto,
+  ): Promise<User> {
+    return this.authService.signUp(signUpDto, profilePhoto);
+  }
+
+  @Patch('/update/profilephoto')
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: './files',
+        filename: customFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  @UseGuards(AuthGuard())
+  updateProfilePhoto(
+    @GetUser() reqUser: User,
+    @UploadedFile() photo: PhotoResponseDto,
+  ) {
+    return this.authService.updateProfilePhoto(reqUser, photo);
   }
 
   @Post('/signin')
@@ -41,6 +78,11 @@ export class AuthController {
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     return this.authService.signIn(authCredentialsDto);
+  }
+
+  @Get('user/:username')
+  getUserByUsername(@Param('username') username: string) {
+    return this.authService.getUserByUsername(username);
   }
 
   @Patch('/update/password')
@@ -62,7 +104,9 @@ export class AuthController {
   }
 
   @Delete('user/delete')
-  delteUser(@Body(ValidationPipe) deleteUserDto: DeleteUserDto): Promise<void> {
+  deleteUser(
+    @Body(ValidationPipe) deleteUserDto: DeleteUserDto,
+  ): Promise<void> {
     return this.authService.deleteUser(deleteUserDto);
   }
 
@@ -82,5 +126,22 @@ export class AuthController {
   @Get(':userId/taggedposts')
   getUserTaggedPosts(@Param('userId', ParseIntPipe) userId: number) {
     return this.authService.getUserTaggedPosts(userId);
+  }
+
+  @Get('/users')
+  @UseGuards(AuthGuard())
+  getAllUsers(@GetUser() reqUser: User) {
+    return this.authService.getAllUsers(reqUser);
+  }
+  @Get('/users/suggested')
+  @UseGuards(AuthGuard())
+  getAllSuggestedUsers(@GetUser() reqUser: User) {
+    return this.authService.getAllSuggestedUsers(reqUser);
+  }
+
+  @Get('/notifications')
+  @UseGuards(AuthGuard())
+  getNotifications(@GetUser() reqUser: User) {
+    return this.authService.getNotifications(reqUser);
   }
 }
